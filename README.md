@@ -91,6 +91,34 @@ ROCm 7.x has `MIOpen` convolution bugs that cause `miopenStatusUnknownError` and
 CHATTERBOX_ROCM_HYBRID=1 CHATTERBOX_DEVICE=rocm python chatterbox_server.py
 ```
 
+# Give Something Back
+
+Use this program? Support it.
+
+---
+
+- Monero:
+  ```
+  84FpY1QbxHcgdseePYNmhTHcrgMX4nFfBYtz2GKYToqHVVhJp8Eaw1Z1EedRnKD19b3B8NiLCGVxzKV17UMmmeEsCrPyA5w
+  ```
+- Bitcoin
+  ```
+  bc1pgqgu8h8xvj4jtafslq396v7ju7hkgymyrzyqft4llfslz5vp99psqfk3a6
+  ```
+- Ethereum
+  ```
+  0x91C421DdfB8a30a49A71d63447ddb54cEBe3465E
+  ```
+- Liberapay: https://liberapay.com/Reticulum/
+
+- Ko-Fi: https://ko-fi.com/markqvist
+
+---
+
+If you're broke, I *may* also accept insightful and paradoxical observations, poetry, postcards or handmade drawings.
+
+You can freely copy, share and distribute `lc` in binary or source form, as long as the `README.md` and `LICENSE.md` files in their entire form, without any modifications is distributed along with it, and displayed prominently to potential users.
+
 ## API Endpoints
 
 ### OpenAI-Compatible
