@@ -1,6 +1,6 @@
 # Chatterbox TTS Server
 
-Fast, OpenAI-compatible TTS server for Chatterbox models with voice cloning support. Built for use with [Ember](https://github.com/markqvist/ember) and [Humanity's Last Command](https://github.com/markqvist/lc).
+Fast, OpenAI-compatible TTS server for Chatterbox models with voice cloning support for local inference. Built for use with [Ember](https://github.com/markqvist/ember) and [Humanity's Last Command](https://github.com/markqvist/lc).
 
 Has a very useful Hybrid Mode for real-time generation on Strix Halo: The hybrid mode works around this by: T3 layers run on GPU, while the S3Gen audio decoder layers runs on CPU (until ROCm `MIOpen` bugs are fixed, at least). Fully compatible with `llama-swap`.
 
@@ -21,7 +21,7 @@ Has a very useful Hybrid Mode for real-time generation on Strix Halo: The hybrid
 
 ### 1. Install PyTorch for Your Platform
 
-**Important:** Install PyTorch for your specific hardware BEFORE installing this package.
+**Important:** Install PyTorch for your specific hardware BEFORE installing this package. You'll most likely need Python 3.11 specifically for all of this. Use `pyenv` and potentially a `venv` as well.
 
 **AMD ROCm (including ROCm 7.x):**
 ```bash
