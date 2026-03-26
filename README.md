@@ -2,7 +2,7 @@
 
 Fast, OpenAI-compatible TTS server for Chatterbox models with voice cloning support for local inference. Built for use with [Ember](https://github.com/markqvist/ember) and [Humanity's Last Command](https://github.com/markqvist/lc).
 
-Has a very useful Hybrid Mode for real-time generation on Strix Halo: The hybrid mode works around this by: T3 layers run on GPU, while the S3Gen audio decoder layers runs on CPU (until ROCm `MIOpen` bugs are fixed, at least). Fully compatible with `llama-swap`.
+Has a very useful Hybrid Mode for real-time generation on Strix Halo: T3 layers run on GPU, while the S3Gen audio decoder layers runs on CPU (until ROCm `MIOpen` bugs are fixed, at least). Fully compatible with `llama-swap`.
 
 ## Features
 
