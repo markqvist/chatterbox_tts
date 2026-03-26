@@ -628,7 +628,7 @@ class TTSGenerator:
         self,
         text: str,
         voice_config: VoiceConfig,
-        output_format: str = "wav",
+        output_format: str = "mp3",
         speed: float = 1.0,
         **override_params
     ) -> tuple[bytes, str]:
