@@ -1,0 +1,61 @@
+# llama-swap configuration for Chatterbox TTS
+# Add this to your llama-swap config file
+
+models:
+  # Chatterbox Turbo - Fast, 350M params, English only
+  audio_tts_chatterbox_turbo:
+    ttl: 30
+    cmd: python3 /path/to/chatterbox_tts/chatterbox_server.py
+    proxy: http://localhost:8082
+    checkEndpoint: "/health"
+    concurrencyLimit: 4
+    env:
+      - CHATTERBOX_DEVICE=cuda
+      - CHATTERBOX_PORT=8082
+      - CHATTERBOX_MODEL_TYPE=turbo
+      - CHATTERBOX_VOICES_DIR=/path/to/chatterbox_tts/voices
+      - CHATTERBOX_MAX_CONCURRENT=4
+      # Optional: Use local model path instead of HF download
+      # - CHATTERBOX_MODEL_PATH=/storage/1/models/chatterbox-turbo
+
+  # Chatterbox Base - 500M params, CFG/exaggeration control, English
+  audio_tts_chatterbox_base:
+    ttl: 30
+    cmd: python3 /path/to/chatterbox_tts/chatterbox_server.py
+    proxy: http://localhost:8083
+    checkEndpoint: "/health"
+    concurrencyLimit: 2
+    env:
+      - CHATTERBOX_DEVICE=cuda
+      - CHATTERBOX_PORT=8083
+      - CHATTERBOX_MODEL_TYPE=base
+      - CHATTERBOX_VOICES_DIR=/path/to/chatterbox_tts/voices
+      - CHATTERBOX_MAX_CONCURRENT=2
+
+  # Chatterbox Multilingual - 500M params, 23+ languages
+  audio_tts_chatterbox_multilingual:
+    ttl: 30
+    cmd: python3 /path/to/chatterbox_tts/chatterbox_server.py
+    proxy: http://localhost:8084
+    checkEndpoint: "/health"
+    concurrencyLimit: 2
+    env:
+      - CHATTERBOX_DEVICE=cuda
+      - CHATTERBOX_PORT=8084
+      - CHATTERBOX_MODEL_TYPE=multilingual
+      - CHATTERBOX_VOICES_DIR=/path/to/chatterbox_tts/voices
+      - CHATTERBOX_MAX_CONCURRENT=2
+
+  # CPU configuration (for GPU-constrained scenarios)
+  audio_tts_chatterbox_cpu:
+    ttl: 30
+    cmd: python3 /path/to/chatterbox_tts/chatterbox_server.py
+    proxy: http://localhost:8085
+    checkEndpoint: "/health"
+    concurrencyLimit: 1
+    env:
+      - CHATTERBOX_DEVICE=cpu
+      - CHATTERBOX_PORT=8085
+      - CHATTERBOX_MODEL_TYPE=turbo
+      - CHATTERBOX_VOICES_DIR=/path/to/chatterbox_tts/voices
+      - CHATTERBOX_MAX_CONCURRENT=1

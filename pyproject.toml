@@ -1,0 +1,50 @@
+[project]
+name = "chatterbox-tts-server"
+version = "0.1.0"
+description = "Fast TTS microservice for Chatterbox models with OpenAI-compatible API"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    # Core server dependencies (platform-agnostic)
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.5.0",
+    "python-multipart>=0.0.6",
+    "aiofiles>=23.2.1",
+    "loguru>=0.7.2",
+    # Audio processing (platform-agnostic)
+    "numpy>=1.24.0,<1.26.0",
+    "soundfile>=0.12.1",
+    # Chatterbox TTS (install torch separately for your platform)
+    "chatterbox-tts>=0.1.6",
+]
+
+[project.optional-dependencies]
+# Platform-specific PyTorch installations
+# Install ONE of these before installing the main package:
+#
+# CUDA 12.4 (NVIDIA):
+#   pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#
+# ROCm 6.0 (AMD - compatible with ROCm 7.x drivers):
+#   pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/rocm6.0
+#
+# CPU only:
+#   pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+#
+# macOS (MPS):
+#   pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0
+
+dev = [
+    "pytest>=7.4.0",
+    "httpx>=0.26.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["chatterbox_server*"]

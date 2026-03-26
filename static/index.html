@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatterbox TTS - Voice Management</title>
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #252542;
+            --text-primary: #e0e0ff;
+            --text-secondary: #a0a0c0;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border: #333355;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            color: var(--text-secondary);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 2rem;
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-input-label:hover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .file-input-label.dragover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .file-input-label .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
+        .btn-danger {
+            background: var(--error);
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .voice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .voice-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: border-color 0.2s;
+        }
+        
+        .voice-item:hover {
+            border-color: var(--accent);
+        }
+        
+        .voice-item.selected {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .voice-info {
+            flex: 1;
+        }
+        
+        .voice-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .voice-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .voice-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+        
+        .voice-badge.turbo { background: #22c55e; }
+        .voice-badge.base { background: #6366f1; }
+        .voice-badge.multilingual { background: #f59e0b; }
+        .voice-badge.lang { background: #10b981; }
+        
+        .voice-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .paralinguistic-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tag-btn {
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tag-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .slider-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 600px) {
+            .slider-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            min-width: 3rem;
+            text-align: right;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Chatterbox TTS</h1>
+            <p>Fast, high-quality text-to-speech with voice cloning</p>
+        </header>
+        
+        <div id="alert-container"></div>
+        
+        <div class="grid">
+            <!-- Voice List -->
+            <div class="card">
+                <h2>🎙️ Voices</h2>
+                <div id="voice-list" class="voice-list">
+                    <div class="empty-state">
+                        <div class="icon">🎤</div>
+                        <p>No voices yet. Create one below.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Create Voice -->
+            <div class="card">
+                <h2>➕ Create Voice</h2>
+                <form id="create-voice-form">
+                    <div class="form-group">
+                        <label for="voice-id">Voice ID</label>
+                        <input type="text" id="voice-id" placeholder="e.g., mark_deep" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="model-type">Model Type</label>
+                        <select id="model-type">
+                            <option value="turbo" selected>Turbo (350M, Fast, English)</option>
+                            <option value="base">Base (500M, CFG Control, English)</option>
+                            <option value="multilingual">Multilingual (500M, 23+ Languages)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="language-group" style="display: none;">
+                        <label for="language-id">Language</label>
+                        <select id="language-id">
+                            <option value="en" selected>English</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="es">Spanish</option>
+                            <option value="it">Italian</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="zh">Chinese</option>
+                            <option value="ja">Japanese</option>
+                            <option value="ko">Korean</option>
+                            <option value="ru">Russian</option>
+                            <option value="pl">Polish</option>
+                            <option value="nl">Dutch</option>
+                            <option value="ar">Arabic</option>
+                            <option value="hi">Hindi</option>
+                            <option value="tr">Turkish</option>
+                            <option value="sv">Swedish</option>
+                            <option value="da">Danish</option>
+                            <option value="no">Norwegian</option>
+                            <option value="fi">Finnish</option>
+                            <option value="he">Hebrew</option>
+                            <option value="el">Greek</option>
+                            <option value="ms">Malay</option>
+                            <option value="sw">Swahili</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Reference Audio (5+ seconds, WAV/MP3/FLAC/OGG)</label>
+                        <label for="voice-audio" class="file-input-label" id="drop-zone">
+                            <div class="icon">📁</div>
+                            <div>Drop audio file here or click to browse</div>
+                            <small id="file-name" style="color: var(--text-secondary);"></small>
+                        </label>
+                        <input type="file" id="voice-audio" accept=".wav,.mp3,.flac,.ogg,.m4a" required>
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="form-group">
+                            <label>Temperature</label>
+                            <div class="slider-container">
+                                <input type="range" id="temperature" min="0.05" max="2" step="0.05" value="0.8">
+                                <span class="slider-value" id="temp-value">0.8</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Top P</label>
+                            <div class="slider-container">
+                                <input type="range" id="top-p" min="0" max="1" step="0.01" value="0.95">
+                                <span class="slider-value" id="topp-value">0.95</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="form-group">
+                            <label>Repetition Penalty</label>
+                            <div class="slider-container">
+                                <input type="range" id="rep-penalty" min="1" max="2" step="0.05" value="1.2">
+                                <span class="slider-value" id="rep-value">1.2</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="cfg-group" style="opacity: 0.5;">
+                            <label>CFG Weight (Base/Multi only)</label>
+                            <div class="slider-container">
+                                <input type="range" id="cfg-weight" min="0" max="2" step="0.1" value="0.5" disabled>
+                                <span class="slider-value" id="cfg-value">0.5</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="create-btn">
+                        Create Voice
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- TTS Generation -->
+        <div class="card" style="margin-top: 2rem;">
+            <h2>🗣️ Generate Speech</h2>
+            
+            <div class="slider-group">
+                <div class="form-group">
+                    <label>Select Voice</label>
+                    <select id="generate-voice">
+                        <option value="">-- Choose a voice --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="gen-language-group" style="opacity: 0.5;">
+                    <label>Language Override (Multilingual)</label>
+                    <select id="generate-language" disabled>
+                        <option value="">Use voice default</option>
+                        <option value="en">English</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="es">Spanish</option>
+                        <option value="it">Italian</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="zh">Chinese</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="ru">Russian</option>
+                        <option value="pl">Polish</option>
+                        <option value="nl">Dutch</option>
+                        <option value="ar">Arabic</option>
+                        <option value="hi">Hindi</option>
+                        <option value="tr">Turkish</option>
+                        <option value="sv">Swedish</option>
+                        <option value="da">Danish</option>
+                        <option value="no">Norwegian</option>
+                        <option value="fi">Finnish</option>
+                        <option value="he">Hebrew</option>
+                        <option value="el">Greek</option>
+                        <option value="ms">Malay</option>
+                        <option value="sw">Swahili</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Text to Synthesize</label>
+                <textarea id="generate-text" placeholder="Enter text here... You can use paralinguistic tags like [laugh], [sigh], [chuckle] for more expressive speech."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Paralinguistic Tags (click to insert)</label>
+                <div class="paralinguistic-tags">
+                    <button type="button" class="tag-btn" data-tag="[clear throat]">[clear throat]</button>
+                    <button type="button" class="tag-btn" data-tag="[sigh]">[sigh]</button>
+                    <button type="button" class="tag-btn" data-tag="[shush]">[shush]</button>
+                    <button type="button" class="tag-btn" data-tag="[cough]">[cough]</button>
+                    <button type="button" class="tag-btn" data-tag="[groan]">[groan]</button>
+                    <button type="button" class="tag-btn" data-tag="[sniff]">[sniff]</button>
+                    <button type="button" class="tag-btn" data-tag="[gasp]">[gasp]</button>
+                    <button type="button" class="tag-btn" data-tag="[chuckle]">[chuckle]</button>
+                    <button type="button" class="tag-btn" data-tag="[laugh]">[laugh]</button>
+                </div>
+            </div>
+            
+            <div class="slider-group">
+                <div class="form-group">
+                    <label>Speed</label>
+                    <div class="slider-container">
+                        <input type="range" id="generate-speed" min="0.25" max="4" step="0.25" value="1">
+                        <span class="slider-value" id="speed-value">1.0x</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Output Format</label>
+                    <select id="output-format">
+                        <option value="wav">WAV</option>
+                        <option value="mp3">MP3</option>
+                        <option value="flac">FLAC</option>
+                        <option value="opus">Opus</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn" id="generate-btn" disabled>
+                Generate Speech
+            </button>
+            
+            <audio id="audio-player" class="audio-player" controls style="display: none;"></audio>
+        </div>
+    </div>
+    
+    <script>
+        // State
+        let voices = [];
+        let selectedVoice = null;
+        
+        // DOM Elements
+        const voiceList = document.getElementById('voice-list');
+        const createForm = document.getElementById('create-voice-form');
+        const generateVoice = document.getElementById('generate-voice');
+        const generateText = document.getElementById('generate-text');
+        const generateBtn = document.getElementById('generate-btn');
+        const audioPlayer = document.getElementById('audio-player');
+        const alertContainer = document.getElementById('alert-container');
+        const modelType = document.getElementById('model-type');
+        const cfgGroup = document.getElementById('cfg-group');
+        const cfgWeight = document.getElementById('cfg-weight');
+        const languageGroup = document.getElementById('language-group');
+        const languageId = document.getElementById('language-id');
+        const genLanguageGroup = document.getElementById('gen-language-group');
+        const generateLanguage = document.getElementById('generate-language');
+        
+        // Utility functions
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertContainer.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Load voices
+        async function loadVoices() {
+            try {
+                const response = await fetch('/v1/voices');
+                const data = await response.json();
+                voices = data.voices || [];
+                renderVoices();
+                updateGenerateVoiceSelect();
+            } catch (error) {
+                console.error('Failed to load voices:', error);
+                showAlert('Failed to load voices', 'error');
+            }
+        }
+        
+        // Render voice list
+        function renderVoices() {
+            if (voices.length === 0) {
+                voiceList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🎤</div>
+                        <p>No voices yet. Create one below.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            voiceList.innerHTML = voices.map(voice => `
+                <div class="voice-item ${selectedVoice === voice.voice_id ? 'selected' : ''}" data-id="${voice.voice_id}">
+                    <div class="voice-info">
+                        <div class="voice-name">
+                            ${voice.voice_id}
+                            <span class="voice-badge ${voice.model_type}">${voice.model_type}</span>
+                            ${voice.language_id && voice.model_type === 'multilingual' ? `<span class="voice-badge lang">${voice.language_id}</span>` : ''}
+                        </div>
+                        <div class="voice-meta">
+                            ${formatDuration(voice.duration_seconds || 0)} · ${voice.sample_rate || 0}Hz
+                        </div>
+                    </div>
+                    <div class="voice-actions">
+                        <button class="btn btn-secondary btn-small preview-btn" data-id="${voice.voice_id}" title="Preview reference">
+                            ▶️
+                        </button>
+                        <button class="btn btn-danger btn-small delete-btn" data-id="${voice.voice_id}" title="Delete">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add event listeners
+            voiceList.querySelectorAll('.voice-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.btn')) {
+                        selectVoice(item.dataset.id);
+                    }
+                });
+            });
+            
+            voiceList.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteVoice(btn.dataset.id);
+                });
+            });
+            
+            voiceList.querySelectorAll('.preview-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    previewVoice(btn.dataset.id);
+                });
+            });
+        }
+        
+        // Select voice
+        function selectVoice(voiceId) {
+            selectedVoice = voiceId;
+            renderVoices();
+            generateVoice.value = voiceId;
+            updateGenerateButton();
+            updateLanguageOverride();
+        }
+        
+        // Update language override based on selected voice
+        function updateLanguageOverride() {
+            const voiceId = generateVoice.value;
+            const voice = voices.find(v => v.voice_id === voiceId);
+            if (voice && voice.model_type === 'multilingual') {
+                genLanguageGroup.style.opacity = '1';
+                generateLanguage.disabled = false;
+                // Set default to voice's language
+                if (voice.language_id) {
+                    generateLanguage.value = ''; // Use voice default
+                }
+            } else {
+                genLanguageGroup.style.opacity = '0.5';
+                generateLanguage.disabled = true;
+                generateLanguage.value = '';
+            }
+        }
+        
+        // Update generate voice select
+        function updateGenerateVoiceSelect() {
+            generateVoice.innerHTML = '<option value="">-- Choose a voice --</option>' +
+                voices.map(v => `<option value="${v.voice_id}">${v.voice_id} (${v.model_type})</option>`).join('');
+        }
+        
+        // Update generate button state
+        function updateGenerateButton() {
+            generateBtn.disabled = !generateVoice.value || !generateText.value.trim();
+        }
+        
+        // Delete voice
+        async function deleteVoice(voiceId) {
+            if (!confirm(`Delete voice "${voiceId}"? This cannot be undone.`)) return;
+            
+            try {
+                const response = await fetch(`/v1/voices/${voiceId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showAlert(`Voice "${voiceId}" deleted`);
+                    if (selectedVoice === voiceId) selectedVoice = null;
+                    loadVoices();
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Failed to delete voice', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to delete voice', 'error');
+            }
+        }
+        
+        // Preview voice
+        async function previewVoice(voiceId) {
+            try {
+                const response = await fetch(`/v1/voices/${voiceId}/preview`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    audioPlayer.src = url;
+                    audioPlayer.style.display = 'block';
+                    audioPlayer.play();
+                } else {
+                    showAlert('Failed to load preview', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to load preview', 'error');
+            }
+        }
+        
+        // Create voice form
+        createForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('voice_id', document.getElementById('voice-id').value);
+            formData.append('model_type', modelType.value);
+            formData.append('language_id', languageId.value);
+            formData.append('temperature', document.getElementById('temperature').value);
+            formData.append('top_p', document.getElementById('top-p').value);
+            formData.append('top_k', '1000');
+            formData.append('repetition_penalty', document.getElementById('rep-penalty').value);
+            formData.append('cfg_weight', cfgWeight.value);
+            formData.append('exaggeration', '0.5');
+            formData.append('norm_loudness', 'true');
+            formData.append('enable_preprocessing', 'true');
+            
+            const audioFile = document.getElementById('voice-audio').files[0];
+            if (!audioFile) {
+                showAlert('Please select an audio file', 'error');
+                return;
+            }
+            formData.append('audio', audioFile);
+            
+            const btn = document.getElementById('create-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Creating...';
+            
+            try {
+                const response = await fetch('/v1/voices', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    showAlert('Voice created successfully');
+                    createForm.reset();
+                    document.getElementById('file-name').textContent = '';
+                    languageGroup.style.display = 'none';
+                    loadVoices();
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Failed to create voice', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to create voice', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create Voice';
+            }
+        });
+        
+        // Generate speech
+        generateBtn.addEventListener('click', async () => {
+            const voice = generateVoice.value;
+            const text = generateText.value.trim();
+            
+            if (!voice || !text) return;
+            
+            const btn = generateBtn;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Generating...';
+            
+            // Get voice data to determine correct model
+            const voiceData = voices.find(v => v.voice_id === voice);
+            const voiceModelType = voiceData ? voiceData.model_type : 'turbo';
+            
+            // Build request body
+            const requestBody = {
+                model: `chatterbox-${voiceModelType}`,
+                input: text,
+                voice: voice,
+                response_format: document.getElementById('output-format').value,
+                speed: parseFloat(document.getElementById('generate-speed').value)
+            };
+
+            // Add language_id override for multilingual
+            if (generateLanguage.value && !generateLanguage.disabled) {
+                requestBody.language_id = generateLanguage.value;
+            }
+            
+            try {
+                const response = await fetch('/v1/audio/speech', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    audioPlayer.src = url;
+                    audioPlayer.style.display = 'block';
+                    audioPlayer.play();
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Generation failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Generation failed', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generate Speech';
+                updateGenerateButton();
+            }
+        });
+        
+        // Paralinguistic tag insertion
+        document.querySelectorAll('.tag-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tag = btn.dataset.tag;
+                const textarea = generateText;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                
+                const before = text.slice(0, start);
+                const after = text.slice(end);
+                const spaceBefore = before.length > 0 && !before.endsWith(' ') ? ' ' : '';
+                const spaceAfter = after.length > 0 && !after.startsWith(' ') ? ' ' : '';
+                
+                textarea.value = before + spaceBefore + tag + spaceAfter + after;
+                textarea.focus();
+                textarea.selectionStart = textarea.selectionEnd = start + spaceBefore.length + tag.length + spaceAfter.length;
+                updateGenerateButton();
+            });
+        });
+        
+        // Slider value updates
+        function setupSlider(id, valueId, suffix = '') {
+            const slider = document.getElementById(id);
+            const value = document.getElementById(valueId);
+            slider.addEventListener('input', () => {
+                value.textContent = slider.value + suffix;
+            });
+        }
+        
+        setupSlider('temperature', 'temp-value');
+        setupSlider('top-p', 'topp-value');
+        setupSlider('rep-penalty', 'rep-value');
+        setupSlider('cfg-weight', 'cfg-value');
+        setupSlider('generate-speed', 'speed-value', 'x');
+        
+        // Model type change - enable/disable CFG and Language
+        modelType.addEventListener('change', () => {
+            const isTurbo = modelType.value === 'turbo';
+            const isMultilingual = modelType.value === 'multilingual';
+            cfgGroup.style.opacity = isTurbo ? '0.5' : '1';
+            cfgWeight.disabled = isTurbo;
+            languageGroup.style.display = isMultilingual ? 'block' : 'none';
+        });
+        
+        // File input
+        const fileInput = document.getElementById('voice-audio');
+        const dropZone = document.getElementById('drop-zone');
+        const fileName = document.getElementById('file-name');
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) {
+                fileName.textContent = fileInput.files[0].name;
+            }
+        });
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileName.textContent = files[0].name;
+            }
+        });
+        
+        // Generate text input
+        generateText.addEventListener('input', updateGenerateButton);
+        generateVoice.addEventListener('change', () => {
+            updateGenerateButton();
+            updateLanguageOverride();
+        });
+        
+        // Initialize
+        loadVoices();
+    </script>
+</body>
+</html>
