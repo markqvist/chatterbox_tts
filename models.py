@@ -26,7 +26,7 @@ class SpeechRequest(BaseModel):
         description="Voice ID (reference audio filename without extension)"
     )
     response_format: Literal["wav", "mp3", "flac", "opus"] = Field(
-        default="wav",
+        default="mp3",
         description="Audio output format"
     )
     speed: float = Field(
