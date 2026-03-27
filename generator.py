@@ -815,11 +815,13 @@ class TTSGenerator:
                 n_cfm_timesteps=2,
             )
         
-        # Step 4: Apply watermark and return
+        # There is no step 4
         wav = wav.squeeze(0).detach().cpu().numpy()
-        watermarked_wav = model.watermarker.apply_watermark(wav, sample_rate=model.sr)
+        return torch.from_numpy(wav)
         
-        return torch.from_numpy(watermarked_wav).unsqueeze(0)
+        # Step 4: Apply watermark and return - uuuh, no?
+        # watermarked_wav = model.watermarker.apply_watermark(wav, sample_rate=model.sr)
+        # return torch.from_numpy(watermarked_wav).unsqueeze(0)
 
     async def _generate_with_cpu_fallback(
         self,
