@@ -41,7 +41,7 @@ pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
 ### 2. Install Chatterbox TTS Server
 
 ```bash
-cd ~/Projects/chatterbox_tts
+cd chatterbox_tts
 pip install -e .
 ```
 
